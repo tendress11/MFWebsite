@@ -1,1 +1,4 @@
-
+gcc
+make
+procps
+strace
