@@ -1,12 +1,30 @@
-import datetime as dt
 import streamlit as st
 
 import pandas as pd
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 import yfinance as yf
-from ta.volatility import BollingerBands
-from ta.trend import MACD
-from ta.momentum import RSIIndicator
+
+import datetime as dt
+
+
+#####  List of all MFs  ######
+
+mfticker = ['ABRYX', 'AMINX', 'AQLGX', 'BIIEX', 'CISIX', 'DHLTX', 'FVADX', 'IMIDX', 'PIFYX', 'POIIX', 'POLIX', 'SBHAX', 'SBLYX', 'SMBYX', 'SOPYX', 'SWPPX', 'VADDX', 'VFTAX', 'ZDIIX']
+
+df_mutualfunds = []
+
+for t in mfticker:
+    df_mutualfunds.append(pd.DataFrame([yf.Ticker(t).info]))
+
+dfmfs = pd.concat(df_mutualfunds)
+
+dfmfs2 = dfmfs.loc[:, ['symbol', 'regularMarketPrice', 'ytdReturn', 'longName', 'annualReportExpenseRatio', 'totalAssets',  'morningStarOverallRating']]
+
+
+st.dataframe(dfmfs2)
 
 
 
@@ -14,7 +32,7 @@ from ta.momentum import RSIIndicator
 # Sidebar #
 ###########
 
-# option = st.sidebar.text_input(label='Input a ticker')
+form = st.form('my_form')
 
 option = st.sidebar.selectbox('Select a symbol', ('ABRYX', 'AMINX', 'AQLGX', 'BIIEX', 'CISIX', 'DHLTX', 'FVADX', 'IMIDX', 'PIFYX', 'POIIX', 'POLIX', 'SBHAX', 'SBLYX', 'SMBYX', 'SOPYX', 'SWPPX', 'VADDX', 'VFTAX', 'ZDIIX'))
 
@@ -36,18 +54,9 @@ else:
 
 df = yf.download(option, start=start_date, end=end_date, progress=False)
 # Bollinger Bands
-indicator_bb = BollingerBands(df['Adj Close'])
 bb = df
-bb['bb_h'] = indicator_bb.bollinger_hband()
-bb['bb_l'] = indicator_bb.bollinger_lband()
 bb = bb[['Adj Close']]
 #bb = bb[['Adj Close','bb_h','bb_l']]
-
-# Moving Average Convergence Divergence
-macd = MACD(df['Adj Close']).macd()
-
-# Resistence Strength Indicator
-rsi = RSIIndicator(df['Adj Close']).rsi()
 
 
 #### Calculate Performance Numbers ####
@@ -72,6 +81,7 @@ performancePercentage = str(performancePercentage)
 
 
 
+
 ####### Fund Holdings ########
 
 ticker = yf.Ticker(option)
@@ -79,7 +89,7 @@ ticker = yf.Ticker(option)
 df4 = ticker.stats()
 
 df4=pd.DataFrame(df4)
-#print(df4)
+print(df4)
 
 df5 = df4.iloc[57]['topHoldings']
 df5 = pd.DataFrame(df5)
@@ -95,9 +105,16 @@ df6 = df4.iloc[50]['fundProfile']
 df6 = pd.DataFrame(df6)
 df6 = df6.reset_index()
 
+
+
+
+
+
+
 ###################
 # Set up main app #
 ###################
+
 
 
 
@@ -130,16 +147,6 @@ with col2:
 st.subheader('{} to {}'.format(start_date, end_date))
 st.subheader('Performance: {}%'.format(performancePercentage))
 st.line_chart(bb)
-
-progress_bar = st.progress(0)
-
-# Plot MACD
-#st.write('Moving Average Convergence Divergence (MACD)')
-#st.area_chart(macd)
-
-# Plot RSI
-#st.write('Stock RSI ')
-#st.line_chart(rsi)
 
 
 # Holdings
