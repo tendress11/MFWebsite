@@ -1,16 +1,14 @@
+import datetime as dt
 import streamlit as st
 
 import pandas as pd
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
 
 import yfinance as yf
 from ta.volatility import BollingerBands
 from ta.trend import MACD
 from ta.momentum import RSIIndicator
 
-import datetime as dt
+
 
 ###########
 # Sidebar #
@@ -81,7 +79,7 @@ ticker = yf.Ticker(option)
 df4 = ticker.stats()
 
 df4=pd.DataFrame(df4)
-print(df4)
+#print(df4)
 
 df5 = df4.iloc[57]['topHoldings']
 df5 = pd.DataFrame(df5)
