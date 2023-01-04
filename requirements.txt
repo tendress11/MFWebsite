@@ -1,3 +1,6 @@
+pandas
+streamlit>=0.67.1
+plotly
 matplotlib
 seaborn
 yfinance
