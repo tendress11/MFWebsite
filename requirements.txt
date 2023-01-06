@@ -4,5 +4,5 @@ plotly
 matplotlib
 seaborn
 yfinance
-ta-lib
+
 
